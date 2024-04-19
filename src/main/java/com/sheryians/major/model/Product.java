@@ -4,6 +4,30 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+// Define an interface for products that can calculate discounts
+interface Discountable {
+    double calculateDiscount();
+}
+
+// Concrete implementation of Discountable for physical products
+class PhysicalProductDiscount implements Discountable {
+    @Override
+    public double calculateDiscount() {
+        // Example discount logic for physical products
+        return 0.1; // 10% discount for physical products
+    }
+}
+
+// Concrete implementation of Discountable for digital products
+class DigitalProductDiscount implements Discountable {
+    @Override
+    public double calculateDiscount() {
+        // Example discount logic for digital products
+        return 0.2; // 20% discount for digital products
+    }
+}
+
+// Modify the Product class to utilize the Discountable abstraction
 @Entity
 @Data
 public class Product {
@@ -20,59 +44,21 @@ public class Product {
     private String description;
     private String imageName;
 
-    public Long getId() {
-        return id;
+    // The Product class delegates discount calculation to a Discountable instance
+    private Discountable discountable;
+
+    // Method to set the discountable instance based on the type of product
+    public void setDiscountable(Discountable discountable) {
+        this.discountable = discountable;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Method to calculate the discount using the assigned Discountable instance
+    public double calculateDiscount() {
+        if (discountable != null) {
+            return discountable.calculateDiscount() * price;
+        }
+        return 0; // Default: No discount
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImageName() {
-        return imageName;
-    }
-
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
+    // Getters and setters as before
 }
